@@ -14,4 +14,6 @@ meta-spec:
 name: Mojolicious-Plugin-ConsoleLogger
 requires:
   Mojolicious: 1.02
-version: 0.01
+resources:
+  repository: git://github.com/tempire/mojolicious-plugin-consolelogger.git
+version: 0.02

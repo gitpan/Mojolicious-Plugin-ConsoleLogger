@@ -3,17 +3,6 @@ MANIFEST
 META.yml
 Makefile.PL
 README.pod
-cover_db/cover.12
-cover_db/cover.css
-cover_db/coverage.html
-cover_db/lib-Mojolicious-Plugin-ConsoleLogger-pm--branch.html
-cover_db/lib-Mojolicious-Plugin-ConsoleLogger-pm--subroutine.html
-cover_db/lib-Mojolicious-Plugin-ConsoleLogger-pm.html
-cover_db/structure/4c11dcc96140d64ff14a895652eca99a
-cover_db/structure/ca8ff6f43f3719b0da9b30daff71dad3
-cover_db/t-logger-t--branch.html
-cover_db/t-logger-t--subroutine.html
-cover_db/t-logger-t.html
 dist.ini
 lib/Mojolicious/Plugin/ConsoleLogger.pm
 t/logger.t
