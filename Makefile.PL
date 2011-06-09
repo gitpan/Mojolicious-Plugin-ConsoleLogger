@@ -4,7 +4,7 @@ use warnings;
 
 
 
-use ExtUtils::MakeMaker 6.31;
+use ExtUtils::MakeMaker 6.30;
 
 
 
@@ -13,16 +13,16 @@ my %WriteMakefileArgs = (
   'AUTHOR' => 'Glen Hinkle <tempire@cpan.org>',
   'BUILD_REQUIRES' => {},
   'CONFIGURE_REQUIRES' => {
-    'ExtUtils::MakeMaker' => '6.31'
+    'ExtUtils::MakeMaker' => '6.30'
   },
   'DISTNAME' => 'Mojolicious-Plugin-ConsoleLogger',
   'EXE_FILES' => [],
   'LICENSE' => 'perl',
   'NAME' => 'Mojolicious::Plugin::ConsoleLogger',
   'PREREQ_PM' => {
-    'Mojolicious' => '1.02'
+    'Mojolicious' => '1.41'
   },
-  'VERSION' => '0.02',
+  'VERSION' => '0.03',
   'test' => {
     'TESTS' => 't/*.t'
   }
