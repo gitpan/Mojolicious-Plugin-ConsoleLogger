@@ -4,62 +4,63 @@ use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::ByteStream;
 use Mojo::JSON;
 
-our $VERSION = 0.03;
+our $VERSION = 0.04;
 
 has logs => sub {
-    return {
-        fatal => [],
-        info  => [],
-        debug => [],
-        error => [],
-    };
+  return {
+    fatal => [],
+    info  => [],
+    debug => [],
+    error => [],
+  };
 };
 
 sub register {
-    my ($plugin, $app) = @_;
+  my ($plugin, $app) = @_;
 
-    # override Mojo::Log->log
-    no strict 'refs';
-    my $stash = \%{"Mojo::Log::"};
-    my $orig  = delete $stash->{"log"};
+  # override Mojo::Log->log
+  no strict 'refs';
+  my $stash = \%{"Mojo::Log::"};
+  my $orig  = delete $stash->{"log"};
 
-    *{"Mojo::Log::log"} = sub {
-        push @{$plugin->logs->{$_[1]}} => $_[-1];
+  *{"Mojo::Log::log"} = sub {
+    push @{$plugin->logs->{$_[1]}} => $_[-1];
 
-        # Original Mojo::Log->log
-        $orig->(@_);
-    };
+    # Original Mojo::Log->log
+    $orig->(@_);
+  };
 
-    $app->hook(
-        after_dispatch => sub {
-            my $self = shift;
-            my $logs = $plugin->logs;
+  $app->hook(
+    after_dispatch => sub {
+      my $self = shift;
+      my $logs = $plugin->logs;
 
-            # leave static content untouched
-            return if $self->stash('mojo.static');
+      # Leave static content untouched
+      return if $self->stash('mojo.static');
 
-            my $str = "\n<!-- Mojolicious logging -->\n<script>";
+      my $str = "\n<!-- Mojolicious logging -->\n<script>\n"
+        . "if (window.console) {";
 
-            for (sort keys %$logs) {
-                next if !@{$logs->{$_}};
-                $str .= "console.group(\"$_\"); ";
-                $str .= _format_msg($_) for @{$logs->{$_}};
-                $str .= "console.groupEnd(\"$_\"); ";
-            }
+      for (sort keys %$logs) {
+        next if !@{$logs->{$_}};
+        $str .= "\nconsole.group(\"$_\");";
+        $str .= "\n" . _format_msg($_) for splice @{$logs->{$_}};
+        $str .= "\nconsole.groupEnd(\"$_\");\n";
+      }
 
-            $str .= "</script>\n";
+      $str .= "}</script>\n";
 
-            $self->res->body($self->res->body . $str);
-        }
-    );
+      $self->res->body($self->res->body . $str);
+    }
+  );
 }
 
 sub _format_msg {
-    my $msg = shift;
+  my $msg = shift;
 
-    return "console.log(" . Mojo::JSON->new->encode($_) . "); " if ref $msg;
-
-    return "console.log(" . Mojo::ByteStream->new($_)->quote . "); ";
+  return ref($msg)
+    ? "console.log(" . Mojo::JSON->new->encode($msg) . "); "
+    : "console.log(" . Mojo::ByteStream->new($msg)->quote . "); ";
 }
 
 1;
@@ -84,6 +85,7 @@ L<Mojolicious::Plugin::ConsoleLogger> pushes Mojolicious log messages to your br
         app->log->error("This is bad");
         app->log->fatal("This is really bad");
         app->log->info("This isn't bad at all");
+        app->log->info({json => 'structure'});
 
         shift->render(text => 'Ahm in ur browzers, logginz ur console');
     };
@@ -111,7 +113,7 @@ L<http://github.com/tempire/mojolicious-plugin-consolelogger>
 
 =head1 VERSION
 
-0.03
+0.04
 
 =head1 CREDITS
 
@@ -120,5 +122,7 @@ Implementation stolen from L<Plack::Middleware::ConsoleLogger>
 =head1 AUTHOR
 
 Glen Hinkle tempire@cpan.org
+
+Andrew Kirkpatrick
 
 =cut
